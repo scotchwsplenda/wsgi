@@ -5,13 +5,29 @@ import traceback
 
 DB = BookDB()
 
-
 def book(book_id):
-    return "Specific book with ID {}".format(book_id)
-
+    page = """
+<h1>{title}</h1>
+<dl>
+    <dt>Audtor</dt> <dd>{author}</dd>
+    <dt>Publisher</dt> <dd>{publisher}</dd>
+    <dt>ISBN</dt> <dd>{isbn}</dd>
+</dl>
+<a href="/">Back to the list</a>
+"""
+    book = DB.title_info(book_id)
+    if book is None:
+        raise NameError
+    return page.format(**book)
 
 def books():
-    return "<h1>a list of books</h1>"
+    all_books = DB.titles()
+    body = ['<h1>My Bookshelf</h1>', '<ul>']
+    item_template = '<li><a href="/book/{id}">{title}</a></li>'
+    for book in all_books:
+        body.append(item_template.format(**book))
+    body.append('</ul>')
+    return '\n'.join(body)
 
 def resolve_path(path):
     funcs = {
